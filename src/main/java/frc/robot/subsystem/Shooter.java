@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PWMTalonFX;
+import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class Shooter {
@@ -23,10 +24,10 @@ public class Shooter {
     
     protected double distance;
 
-    protected NetworkTable camera = NetworkTableInstance.getDefault().getTable("limelight")
+    protected NetworkTable camera = NetworkTableInstance.getDefault().getTable("limelight");
 
     private final SpeedController shooterAngleMotor = new PWMVictorSPX(SHOOTER_ANGLE_MOTOR_01);
-    private final PWMTalonFX shooterMotor = new PWMTalonFX(SHOOTER_MOTOR_01)
+    private final PWMTalonFX shooterMotor = new PWMTalonFX(SHOOTER_MOTOR_01);
 
     private double greenZoneStart = 0.0;
     private double greenZoneStop = 90.0;
