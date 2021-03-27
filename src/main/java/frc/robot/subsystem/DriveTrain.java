@@ -10,20 +10,18 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.lib.TankDriveConstants;
 import edu.wpi.first.wpilibj.Encoder;
 
-// Drive station
-import edu.wpi.first.wpilibj.Joystick;
-
 // NavX2 Gryoscope/Accelerameter/Magnetometter
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.SPI;
+
+import edu.wpi.first.wpilibj.SerialPort.Port;
 
 public class DriveTrain {
     private final SpeedController frontLeftMotor = new PWMTalonSRX(TankDriveConstants.LEFT_MOTOR_01);
     private final SpeedController backLeftMotor = new PWMTalonSRX(TankDriveConstants.LEFT_MOTOR_02);
     private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
 
-    private final SpeedController frontRightMotor = new PWMTalonSRX(2);
-    private final SpeedController backRightMotor = new PWMTalonSRX(3);
+    private final SpeedController frontRightMotor = new PWMTalonSRX(TankDriveConstants.RIGHT_MOTOR_01);
+    private final SpeedController backRightMotor = new PWMTalonSRX(TankDriveConstants.RIGHT_MOTOR_02);
     private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(frontRightMotor, backRightMotor);
     
     private DifferentialDrive tankDriveTrain = new DifferentialDrive(leftMotors, rightMotors);
@@ -42,16 +40,41 @@ public class DriveTrain {
         TankDriveConstants.RIGHT_ENCODER_REVERSED_01
     );
 
-    Joystick joystick01 = new Joystick(TankDriveConstants.JOYSTICK_01);
-    Joystick joystick02 = new Joystick(TankDriveConstants.JOYSTICK_02);
+    double heading;
+    double kP = 1;
+
+    private static final double WHEEL_DIAMETER = 6;
+    private static final double ROBOT_DIAMETER = 46;
+
+    // One foot per encoder rotation
+    private static double distancePerPulse = 1.0 / 256.0;
+
+    double movementPerDegree = ((ROBOT_DIAMETER / WHEEL_DIAMETER) * distancePerPulse) / 360;
+
+    public DriveTrain() {
+        this.resetEncoders();
+
+        this.leftEncoder.setDistancePerPulse(distancePerPulse);
+        this.rightEncoder.setDistancePerPulse(distancePerPulse);
+
+        this.zeroHeading();
+
+        this.heading = this.gyroAhrs.getAngle();
+    }
 
     /* Communicate w/navX-MXP via the MXP SPI Bus.                                     */
     /* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
     /* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
-    AHRS gyroAhrs = new AHRS(SPI.Port.kMXP); 
+    AHRS gyroAhrs = new AHRS(Port.kUSB1); 
 
-    public void drive() {
-        tankDriveTrain.tankDrive(joystick01.getX(), joystick02.getX());
+    public void drive(double x, double y) {
+        double error = this.heading - this.gyroAhrs.getAngle();
+
+        tankDriveTrain.tankDrive(x + (this.kP * error), y + (this.kP * error));
+    }
+
+    public void driveToPosition() {
+
     }
 
     public void resetEncoders() {
@@ -73,5 +96,21 @@ public class DriveTrain {
 
     public void zeroHeading() {
         gyroAhrs.reset();
+    }
+
+    public double getHeading() {
+        return this.heading;
+    }
+
+    public void setHeading() {
+        this.heading = this.gyroAhrs.getAngle();
+    }
+
+    public double[] rotateRobot(double angle) {
+        double[] position = {0.0, 0.0};
+
+
+
+        return position;
     }
 }
