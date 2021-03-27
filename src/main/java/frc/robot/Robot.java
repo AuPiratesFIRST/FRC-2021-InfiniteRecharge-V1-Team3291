@@ -4,15 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import com.ctre.phoenix.motorcontrol.ControlMode;
-// import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import edu.wpi.first.wpilibj.PWMTalonFX;
+import frc.robot.subsystem.Shooter;
+import frc.robot.subsystem.DriveTrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,8 +22,10 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  PWMTalonFX talonFX = new PWMTalonFX(0);
 
+  DriveTrain mTankDrive = new DriveTrain();
+
+  Shooter shooter = new Shooter();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -51,20 +49,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    talonFX.set(1.0);
-    
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-    NetworkTableEntry tx = table.getEntry("tx");
-    NetworkTableEntry ty = table.getEntry("ty");
-    NetworkTableEntry ta = table.getEntry("ta");
- 
-    double x = tx.getDouble(0.0);  
-    double y = ty.getDouble(0.0);
-    double area = ta.getDouble(0.0);
+    // Monitor drive controls
+    mTankDrive.drive();
 
-    SmartDashboard.putNumber("LimelightX", x);
-    SmartDashboard.putNumber("LimelightY", y);
-    SmartDashboard.putNumber("LimelightArea", area);
+    shooter.autoShoot();
 
   }
 
