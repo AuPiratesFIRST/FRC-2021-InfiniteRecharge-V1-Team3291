@@ -16,15 +16,14 @@ import edu.wpi.first.wpilibj.SPI;
 // Logging
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import edu.wpi.first.wpilibj.Joystick;
+
 public class Shooter {
     // Goal height in inches
     private static final double GOAL_HEIGHT = 96;
 
     // Camera height in inches
     private static final double CAMERA_HEIGHT = 18;
-
-    // Camera angle in degrees
-    private static final double CAMERA_ANGLE = 20;
 
     // RoboRIO port
     private static final int SHOOTER_ANGLE_MOTOR_01 = 6;
@@ -57,40 +56,86 @@ public class Shooter {
     private int forward = 1;
     private int reverse = -1;
 
+    Joystick joystick01;
+    Joystick joystick02;
+
+    DriveTrain mDriveTrain;
+
+    public Shooter(Joystick joystick1, Joystick joystick2, DriveTrain mDriveTrain) {
+        this.joystick01 = joystick1;
+        this.joystick02 = joystick2;
+
+        this.mDriveTrain = mDriveTrain;
+    }
+
     public void autoShoot() {
         if (this.isValidTarget()) {
-
             this.distance = calculateDistance();
  
             if (this.distance >= RED_ZONE_START && this.distance <= RED_ZONE_STOP) {
+                // Figure out how much to turn the bot to be straight shot to the target
+
+                // Turn bot to be more straight with the target
+                mDriveTrain.driveToPosition();
                 // Not sure if we need this yet.
             } else if (this.distance >= BLUE_ZONE_START && this.distance <= BLUE_ZONE_STOP) {
+                // Figure out how much to turn the bot to be straight shot to the target
+
+                // Turn bot to be more straight with the target
+                mDriveTrain.driveToPosition();
                 // Not sure if we need this yet.
             } else if (this.distance >= YELLOW_ZONE_START && this.distance <= YELLOW_ZONE_STOP) {
+                // Angle shooter so it can hit the target
                 angleShooterHood(this.reverse, 20);
-            } else if (this.distance >= GREEN_ZONE_START && this.distance <= GREEN_ZONE_STOP) {  
+
+                // Figure out how much to turn the bot to be straight shot to the target
+
+                // Turn bot to be more straight with the target
+                mDriveTrain.driveToPosition();
+            } else if (this.distance >= GREEN_ZONE_START && this.distance <= GREEN_ZONE_STOP) { 
+                // Angle shooter so it can hit the target
                 angleShooterHood(this.forward, 20);
+
+                // Figure out how much to turn the bot to be straight shot to the target
+
+                // Turn bot to be more straight with the target
+                mDriveTrain.driveToPosition();
             }
-            
-            shooterMotor.set(1.0);
         }
+            
+        // Shoot whether valid target or not
+        shooterMotor.set(1.0);
     }    
 
+    public void stopShooterMotor() {
+        shooterMotor.set(0.0);
+    }
+
+    // Estimate distance to target
     public double calculateDistance() {
         double angleToTarget;
+        double cameraAngle;
         double distanceToGoal;
 
         angleToTarget = getGoalAngle();
+        cameraAngle = getCameraAngle();
 
-        distanceToGoal = (GOAL_HEIGHT - CAMERA_HEIGHT) / Math.tan(CAMERA_ANGLE + angleToTarget);
+        distanceToGoal = (GOAL_HEIGHT - CAMERA_HEIGHT) / Math.tan(cameraAngle + angleToTarget);
 
         return distanceToGoal;
     }
 
+    // Gets angle of the target from center of the camera
     public double getGoalAngle() {
         return camera.getEntry("tx").getDouble(0.0);
     }
 
+    // Gets the angle of the camera from the gyro
+    public double getCameraAngle() {
+        return this.gyro.getAngle();
+    }
+
+    // Check if camera has a valid target
     public boolean isValidTarget() {
         return camera.getEntry("tv").getBoolean(false);
     }
@@ -108,7 +153,7 @@ public class Shooter {
 
         do {
             // Check angle constantly to determine if we're where we want to be
-            gyroAngle = this.gyro.getAngle();
+            gyroAngle = this.getCameraAngle();
 
             // Tell me what the angle is
             SmartDashboard.putNumber("Shooter Angle", gyroAngle);
