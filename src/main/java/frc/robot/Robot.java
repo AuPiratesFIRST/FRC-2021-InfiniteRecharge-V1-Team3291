@@ -105,12 +105,15 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    ballRelease.set(0.10);
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
     drive(joystick02.getY(), joystick01.getY());
+    SmartDashboard.putNumber("Joy2.Y", joystick02.getY());
+    SmartDashboard.putNumber("Joy1.Y", joystick01.getY());
 
     if (joystick03.getTriggerPressed()) {
       // Change to 1.0 once camera board is raised.
@@ -138,11 +141,11 @@ public class Robot extends TimedRobot {
     }
 
     if (joystick03.getRawButtonPressed(5)) {
-      ballRelease.set(0);
+      ballRelease.set(0.10);
     }
 
     if (joystick03.getRawButtonReleased(5)) {
-      ballRelease.set(0);
+      ballRelease.set(0.10);
     }
 
     if (joystick03.getRawButtonPressed(6)) {
