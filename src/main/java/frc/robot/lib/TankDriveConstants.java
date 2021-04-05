@@ -4,10 +4,11 @@ public class TankDriveConstants {
     public static final int LEFT_MOTOR_01 = 0;
     public static final int LEFT_MOTOR_02 = 1;
     public static final int RIGHT_MOTOR_01 = 2;
-    public static final int RIGHT_MOTOR_02 = 4;
+    public static final int RIGHT_MOTOR_02 = 3;
     
-    public static final int JOYSTICK_01 = 0;
-    public static final int JOYSTICK_02 = 1;
+    public static final int JOYSTICK_01 = 1;
+    public static final int JOYSTICK_02 = 4;
+    public static final int JOYSTICK_03 = 3;    
 
     // Encoder ports/channels
     protected static final int[] LEFT_ENCODER_01 = {0, 1};

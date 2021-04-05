@@ -1,5 +1,12 @@
 [
   {
+    "artifact": "frcJava (in project Team3291_InfiniteRecharge_2021)",
+    "target": "roborio",
+    "debugfile": "frcJava_roborio.debugconfig",
+    "project": "Team3291_InfiniteRecharge_2021",
+    "language": "java"
+  },
+  {
     "artifact": "frcJava (in project TestLimelight)",
     "target": "roborio",
     "debugfile": "frcJava_roborio.debugconfig",

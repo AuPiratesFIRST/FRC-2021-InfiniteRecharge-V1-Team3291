@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.lib.TankDriveConstants;
 import edu.wpi.first.wpilibj.Encoder;
 
@@ -16,6 +17,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 
 public class DriveTrain {
+    /*
     private final SpeedController frontLeftMotor = new PWMTalonSRX(TankDriveConstants.LEFT_MOTOR_01);
     private final SpeedController backLeftMotor = new PWMTalonSRX(TankDriveConstants.LEFT_MOTOR_02);
     private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
@@ -25,7 +27,8 @@ public class DriveTrain {
     private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(frontRightMotor, backRightMotor);
     
     private DifferentialDrive tankDriveTrain = new DifferentialDrive(leftMotors, rightMotors);
-
+    */
+    /*
     int[] leftEncoderChannels = TankDriveConstants.getLeftEncoders();
     private Encoder leftEncoder = new Encoder(
         leftEncoderChannels[0],
@@ -61,37 +64,21 @@ public class DriveTrain {
 
         this.heading = this.gyroAhrs.getAngle();
     }
-
+    */
     /* Communicate w/navX-MXP via the MXP SPI Bus.                                     */
     /* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
     /* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
-    AHRS gyroAhrs = new AHRS(Port.kUSB1); 
+   /* AHRS gyroAhrs = new AHRS(Port.kUSB1); 
 
-    public void drive(double x, double y) {
+    public void drive(double powerLeft, double powerRight) {
         double error = this.heading - this.gyroAhrs.getAngle();
 
-        tankDriveTrain.tankDrive(x + (this.kP * error), y + (this.kP * error));
-    }
-
-    public void driveToPosition() {
-
+        //tankDriveTrain.tankDrive(powerLeft + (this.kP * error), powerRight + (this.kP * error));
     }
 
     public void resetEncoders() {
         leftEncoder.reset();
         rightEncoder.reset();
-    }
-
-    public Encoder getLeftEncoder() {
-        return leftEncoder;
-    }
-
-    public Encoder getRightEncoder() {
-        return rightEncoder;
-    }
-
-    public double getAverageEncoderDistance() {
-        return ((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);
     }
 
     public void zeroHeading() {
@@ -106,11 +93,20 @@ public class DriveTrain {
         this.heading = this.gyroAhrs.getAngle();
     }
 
-    public double[] rotateRobot(double angle) {
-        double[] position = {0.0, 0.0};
+    public void rotateRobot(double rotateAngle) {
+        double movement = rotateAngle * this.movementPerDegree;
+        
+        this.resetEncoders();
 
+        this.drive(0.25, 0.25);
 
+        do {
+            SmartDashboard.putNumber("left distance", this.leftEncoder.getDistance());
+            SmartDashboard.putNumber("right distance", this.rightEncoder.getDistance());
+            SmartDashboard.putNumber("movement", movement);
+        } while (this.leftEncoder.getDistance() < movement && this.rightEncoder.getDistance() < movement);
 
-        return position;
+        this.drive(0.0, 0.0);
     }
+    */
 }
